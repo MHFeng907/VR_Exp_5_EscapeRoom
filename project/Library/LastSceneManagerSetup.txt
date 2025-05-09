@@ -1,0 +1,17 @@
+sceneSetups:
+- path: Assets/Scenes/Intro.unity
+  isLoaded: 1
+  isActive: 1
+  isSubScene: 0
+- path: Assets/Scenes/Room1.unity
+  isLoaded: 1
+  isActive: 0
+  isSubScene: 0
+- path: Assets/Scenes/Room2.unity
+  isLoaded: 1
+  isActive: 0
+  isSubScene: 0
+- path: Assets/Scenes/Room3.unity
+  isLoaded: 1
+  isActive: 0
+  isSubScene: 0

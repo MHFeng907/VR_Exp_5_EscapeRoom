@@ -1,0 +1,6 @@
+D:\Pico\Enterprise\Sample\VirtualDisplay\VirtualDisplayDemo.cs(11,20): warning CS0108: 'VirtualDisplayDemo.tag' hides inherited member 'Component.tag'. Use the new keyword if hiding was intended.
+D:\Pico\Enterprise\Sample\VirtualDisplay\VirtualDisplayEvent.cs(18,19): warning CS0108: 'VirtualDisplayEvent.tag' hides inherited member 'Component.tag'. Use the new keyword if hiding was intended.
+D:\Pico\Enterprise\Scripts\Plugin\PXR_EnterprisePlugin.cs(1651,17): warning CS0219: The variable 'sensorFrameIndex' is assigned but its value is never used
+D:\Pico\Enterprise\Scripts\Plugin\PXR_EnterprisePlugin.cs(2260,22): warning CS0219: The variable 'value' is assigned but its value is never used
+D:\Pico\Enterprise\Scripts\Plugin\PXR_EnterprisePlugin.cs(2304,20): warning CS0219: The variable 'value' is assigned but its value is never used
+D:\Pico\Enterprise\Sample\VirtualDisplay\VirtualDisplayDemo.cs(14,18): warning CS0414: The field 'VirtualDisplayDemo.isBind' is assigned but its value is never used

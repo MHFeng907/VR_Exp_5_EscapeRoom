@@ -1,0 +1,4 @@
+repository "exp5@tj_vr_16@cloud.cn"
+  path "/"
+    br "/main"
+    co "/main"
