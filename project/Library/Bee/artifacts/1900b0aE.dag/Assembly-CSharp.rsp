@@ -459,6 +459,7 @@
 "Assets/MHLab/StickyNotes/Scripts/StickyNotesManager.cs"
 "Assets/MHLab/StickyNotes/Scripts/StickyNoteTag.cs"
 "Assets/Radio.cs"
+"Assets/RevealCanvasOnGrab.cs"
 "Assets/Room1Intro.cs"
 "Assets/Room2Intro.cs"
 "Assets/Room3Intro.cs"

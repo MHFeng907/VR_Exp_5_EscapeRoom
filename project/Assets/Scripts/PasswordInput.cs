@@ -12,7 +12,7 @@ public class PasswordInput : MonoBehaviour
     public string correctPassword = "20130512";
 
     [Header("数字按钮")]
-    public List<DigitButton> numberButtons; // DigitButton自定义类
+    public List<DigitButton> numberButtons;
 
     public Color flashColor = Color.yellow;
     public float flashDuration = 0.2f;
@@ -32,12 +32,19 @@ public class PasswordInput : MonoBehaviour
     public string closeAnimationTrigger = "PlayClose";
     public string runAnimationTrigger = "PlayRun";
 
-    [Header("键盘Canvas")]  // 新增
-    public Canvas keyboardCanvas; // 需要手动拖上去，或者自动赋值
+    [Header("键盘Canvas")]
+    public Canvas keyboardCanvas;
+
+    [Header("提示Canvas")]
+    public Canvas tipCanvas;
+
+    [Header("注意Canvas")] // ? 新增字段
+    public Canvas attentionCanvas;
+
+    private Dictionary<Button, Color> originalButtonColors = new Dictionary<Button, Color>();
 
     private void Start()
     {
-        // 键盘Canvas如果没手动拖，可以自动找（假设按钮都在同一个Canvas下）
         if (keyboardCanvas == null && numberButtons.Count > 0)
         {
             keyboardCanvas = numberButtons[0].button.GetComponentInParent<Canvas>();
@@ -46,15 +53,29 @@ public class PasswordInput : MonoBehaviour
         if (consolePanel != null)
             consolePanel.SetActive(false);
 
+        if (tipCanvas != null)
+            tipCanvas.enabled = false;
+
+        if (attentionCanvas != null)
+            attentionCanvas.enabled = false; // ? 初始隐藏
+
         if (closeButton != null)
             closeButton.onClick.AddListener(OnCloseClicked);
 
         if (runButton != null)
             runButton.onClick.AddListener(OnRunClicked);
 
-        // 绑定数字按钮XR交互事件
         foreach (var digitBtn in numberButtons)
         {
+            if (digitBtn.button != null)
+            {
+                var img = digitBtn.button.GetComponent<Image>();
+                if (img != null)
+                {
+                    originalButtonColors[digitBtn.button] = img.color;
+                }
+            }
+
             if (digitBtn.interactable != null)
             {
                 digitBtn.interactable.selectEntered.AddListener((args) => EnterDigit(digitBtn.digit));
@@ -87,22 +108,7 @@ public class PasswordInput : MonoBehaviour
         if (enteredPassword == correctPassword)
         {
             Debug.Log("密码正确，激活控制台！");
-
-            if (successAudioSource != null)
-                successAudioSource.Play();
-
-            // 先变绿
-            StartCoroutine(FlashGreenAll());
-
-            // 隐藏键盘
-            if (keyboardCanvas != null)
-            {
-                keyboardCanvas.enabled = false;
-            }
-
-            // 显示控制台
-            if (consolePanel != null)
-                consolePanel.SetActive(true);
+            StartCoroutine(HandleSuccessSequence());
         }
         else
         {
@@ -133,29 +139,31 @@ public class PasswordInput : MonoBehaviour
     {
         Image img = btn.GetComponent<Image>();
         Vector3 originalScale = btn.transform.localScale;
-        Color originalColor = img.color;
 
-        img.color = flashColor;
-        btn.transform.localScale = originalScale * bounceScale;
+        if (img != null)
+        {
+            Color originalColor = originalButtonColors.ContainsKey(btn) ? originalButtonColors[btn] : img.color;
 
-        yield return new WaitForSeconds(flashDuration);
+            img.color = flashColor;
+            btn.transform.localScale = originalScale * bounceScale;
 
-        img.color = originalColor;
-        btn.transform.localScale = originalScale;
+            yield return new WaitForSeconds(flashDuration);
+
+            img.color = originalColor;
+            btn.transform.localScale = originalScale;
+        }
     }
 
     private IEnumerator FlashRedAll()
     {
-        Color originalColor = Color.white;
         Color errorColor = Color.red;
 
         foreach (var btn in numberButtons)
         {
-            if (btn.button != null)
+            var img = btn.button.GetComponent<Image>();
+            if (img != null)
             {
-                var img = btn.button.GetComponent<Image>();
-                if (img != null)
-                    img.color = errorColor;
+                img.color = errorColor;
             }
         }
 
@@ -163,11 +171,10 @@ public class PasswordInput : MonoBehaviour
 
         foreach (var btn in numberButtons)
         {
-            if (btn.button != null)
+            var img = btn.button.GetComponent<Image>();
+            if (img != null && originalButtonColors.TryGetValue(btn.button, out Color originalColor))
             {
-                var img = btn.button.GetComponent<Image>();
-                if (img != null)
-                    img.color = originalColor;
+                img.color = originalColor;
             }
         }
     }
@@ -178,23 +185,54 @@ public class PasswordInput : MonoBehaviour
 
         foreach (var btn in numberButtons)
         {
-            if (btn.button != null)
+            var img = btn.button.GetComponent<Image>();
+            if (img != null)
             {
-                var img = btn.button.GetComponent<Image>();
-                if (img != null)
-                    img.color = successColor;
+                img.color = successColor;
             }
         }
 
-        yield return new WaitForSeconds(0.5f); // 稍微给玩家看0.5秒，然后键盘消失
+        yield return new WaitForSeconds(0.5f);
+
+        foreach (var btn in numberButtons)
+        {
+            var img = btn.button.GetComponent<Image>();
+            if (img != null && originalButtonColors.TryGetValue(btn.button, out Color originalColor))
+            {
+                img.color = originalColor;
+            }
+        }
+    }
+
+    private IEnumerator HandleSuccessSequence()
+    {
+        if (successAudioSource != null)
+            successAudioSource.Play();
+
+        yield return StartCoroutine(FlashGreenAll());
+
+        if (keyboardCanvas != null)
+            keyboardCanvas.enabled = false;
+
+        if (consolePanel != null)
+            consolePanel.SetActive(true);
+
+        if (tipCanvas != null)
+            tipCanvas.enabled = true;
+            tipCanvas.gameObject.SetActive(true);
+
+
+        if (attentionCanvas != null) // ? 新增逻辑
+            attentionCanvas.enabled = true;
+            attentionCanvas.gameObject.SetActive(true);
+
     }
 }
 
-// 辅助类：DigitButton
 [System.Serializable]
 public class DigitButton
 {
-    public string digit;  // 比如"1","2"
-    public Button button; // 真实UI按钮
-    public XRSimpleInteractable interactable; // XR的交互器
+    public string digit;
+    public Button button;
+    public XRSimpleInteractable interactable;
 }
