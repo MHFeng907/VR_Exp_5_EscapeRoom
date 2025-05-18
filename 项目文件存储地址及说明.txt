@@ -1,0 +1,7 @@
+Github仓库链接：
+https://github.com/MHFeng907/VR_Exp_5_EscapeRoom.git
+
+夸克网盘链接：
+
+
+注：请优先选择在Unity打开工程文件，选择4K UHD (3840×2160) + Scale=0.62x，运行查看最佳效果。
